@@ -1,0 +1,40 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+string find_field(const string& xml, string tag_name);
+
+int main() {
+	string page, line, location, temperature;
+	ifstream inputFile("weather.xml");
+
+	while (getline(inputFile, line)) {
+		page.append(line);
+		line.erase();
+	}
+	// Now page is a string that contains the whole xml page
+
+	location = find_field(page, "location");
+	temperature = find_field(page, "temp_c");
+
+	cout << "Location: " << location << endl;
+	cout << "Temperature: " << temperature << endl;
+
+}
+
+
+string find_field(const string& xml, string tag_name)
+{
+	size_t startpos, endpos;
+
+	startpos = xml.find("<" + tag_name + ">");
+	if (startpos == string::npos)
+		return "not found";
+	startpos = xml.find(">", startpos);
+	endpos = xml.find("</" + tag_name + ">", startpos++);
+	if (endpos == string::npos)
+		return "not found";
+	return xml.substr(startpos, endpos - startpos);
+}
